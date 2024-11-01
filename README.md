@@ -12,4 +12,4 @@ The make and shell file should be able to automatically download all packages an
   - Ex. `make batch folder=<...>`
 - `clean_conn`: Deletes all connectors. Even running ones
 - `stat_conn`: Returns the status of all connectors
-1. `clean`: cleans the whole compose
+3. `clean`: cleans the whole compose

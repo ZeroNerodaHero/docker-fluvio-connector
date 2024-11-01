@@ -2,6 +2,7 @@ IMAGE_NAME = fluvio:sdf
 WORKER_NAME = docker-worker
 SDF_WORKER = sdf-worker
 
+default: help
 up: build compose
 build:
 	docker build -t $(IMAGE_NAME) .
@@ -54,4 +55,28 @@ batch:
 clean:
 	docker-compose down
 	docker volume prune
+
+help:
+	@echo "Usage: make <target> [arguments]"
+	@echo ""
+	@echo "Targets:"
+	@echo "  \033[1mup\033[0m                 Initializes the Fluvio cluster "
+	@echo ""
+	@echo "  \033[1mconnector\033[0m          Starts a specific connector defined by a configuration file."
+	@echo "                     Arguments: config=<path_to_config>"
+	@echo "                     Example: make connector config=<path-to-file>"
+	@echo ""
+	@echo "  \033[1mshutdown\033[0m           Shuts down a specific connector by name."
+	@echo "                     Arguments: name=<connector_name>"
+	@echo "                     Example: make shutdown name=<my_connector>"
+	@echo ""
+	@echo "  \033[1mbatch\033[0m              Starts all connectors defined in the specified folder, attempting to run all .yaml files."
+	@echo "                     Arguments: folder=<path_to_folder>"
+	@echo "                     Example: make batch folder=<path/to/connectors>"
+	@echo ""
+	@echo "  \033[1mclean_conn\033[0m         Deletes all connectors, including any currently running ones."
+	@echo ""
+	@echo "  \033[1mstat_conn\033[0m          Shows the status of all connectors, including active and inactive connectors."
+	@echo ""
+	@echo "  \033[1mclean\033[0m              Cleans up the entire Docker Compose environment"
 .PHONY: all build up profile register update clean
