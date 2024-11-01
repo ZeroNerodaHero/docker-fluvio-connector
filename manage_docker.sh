@@ -106,6 +106,12 @@ elif [ "$1" == "start" ]; then
         exit 1
     fi
     startconnector $2
+elif [ "$1" == "shutdown" ]; then
+    if [ -z "$2" ]; then
+        echo "Usage: $0 <name>"
+        exit 1
+    fi
+    cdk deploy shutdown --name $2
 elif [ "$1" == "status" ]; then
     printline2
     echo "Status"

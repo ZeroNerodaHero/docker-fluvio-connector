@@ -17,11 +17,21 @@ ifneq ($(MAKECMDGOALS),)
         endif
     endif
 endif
-
-start_conn:
+connector:
 	docker cp manage_docker.sh connector:/fluvio/
 	docker cp $(config) connector:/fluvio/
 	docker exec connector sh -c "./manage_docker.sh start $(shell basename $(config))"
+
+ifneq ($(MAKECMDGOALS),)
+    ifeq ($(MAKECMDGOALS), shutdown)
+        ifeq ($(name),)
+            $(error You must specify a running connector. Usage make shutdown name=<...>)
+        endif
+    endif
+endif
+shutdown_conn:
+	docker cp manage_docker.sh connector:/fluvio/
+	docker exec connector sh -c "./manage_docker.sh shutdown $(name)"
 
 clean_conn:
 	docker cp manage_docker.sh connector:/fluvio/
@@ -29,7 +39,17 @@ clean_conn:
 
 stat_conn:
 	docker cp manage_docker.sh connector:/fluvio/
-	docker exec connector ./manage_docker.sh status
+
+ifneq ($(MAKECMDGOALS),)
+    ifeq ($(MAKECMDGOALS), batch)
+        ifeq ($(folder),)
+            $(error You must specify a running connector. Usage make batch folder=<...>)
+        endif
+    endif
+endif
+batch:
+	docker cp manage_docker.sh connector:/fluvio/
+	find A_conn -type f -exec make connector config={} \;
 
 clean:
 	docker-compose down
