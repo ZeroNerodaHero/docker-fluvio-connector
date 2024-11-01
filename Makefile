@@ -7,7 +7,7 @@ up: build compose
 build:
 	docker build -t $(IMAGE_NAME) .
 compose:
-	docker-compose up
+	docker-compose up -d
 	fluvio profile add sdf-docker 127.0.0.1:9103  docker
 	sdf worker register $(WORKER_NAME) $(SDF_WORKER)
 
@@ -52,8 +52,9 @@ batch:
 	docker cp manage_docker.sh connector:/fluvio/
 	find A_conn -type f -exec make connector config={} \;
 
-clean:
+down:
 	docker-compose down
+clean: down
 	docker volume prune
 
 help:
@@ -63,6 +64,7 @@ help:
 	@echo "  \033[1mup\033[0m                 Initializes the Fluvio cluster "
 	@echo ""
 	@echo "  \033[1mconnector\033[0m          Starts a specific connector defined by a configuration file."
+	@echo "                     Will install all packages and sm in the docker container"
 	@echo "                     Arguments: config=<path_to_config>"
 	@echo "                     Example: make connector config=<path-to-file>"
 	@echo ""
@@ -78,5 +80,7 @@ help:
 	@echo ""
 	@echo "  \033[1mstat_conn\033[0m          Shows the status of all connectors, including active and inactive connectors."
 	@echo ""
+	@echo "  \033[1mdown\033[0m               Runs docker compose down"
+	@echo ""
 	@echo "  \033[1mclean\033[0m              Cleans up the entire Docker Compose environment"
-.PHONY: all build up profile register update clean
+.PHONY: all build up update clean
